@@ -48,7 +48,46 @@ store your apikeys like this in the .env file
 
 ## Usage
 
-[Add basic usage instructions here]
+To get started with AUDSOL, follow these steps:
+
+1. **Launch AUDSOL**: Run the application and you'll be greeted with the main dashboard.
+
+2. **Navigate Features**: Use the sidebar menu to access different tools:
+   - **AI Character Creation**: 
+     - Click on "Interactive Character Board" in the sidebar.
+     - Fill out the character details in the "Add New Character" form.
+     - Use sliders to set character stats and add custom stats as needed.
+     - Click "Add Character" to save your new character.
+
+   - **Interactive Character Chats**:
+     - Select "Character Chat" from the sidebar.
+     - Choose a character from your created list.
+     - Start typing to engage in a conversation with your AI-powered character.
+
+   - **Automated Book Generation**:
+     - Navigate to "Book Generator" in the sidebar.
+     - Input your book's title, genre, and basic plot outline.
+     - Click "Generate Book" to create a full-length manuscript.
+
+   - **Audiobook Conversion**:
+     - Go to "Audiobook Creator" in the sidebar.
+     - Upload your book text or select a generated book.
+     - Choose voice settings and click "Convert to Audiobook".
+
+   - **Book Outline Generator**:
+     - Select "Outline Generator" from the sidebar.
+     - Input your book's main idea and key points.
+     - Click "Generate Outline" to receive a detailed chapter-by-chapter plan.
+
+   - **Writing Prompts Generator**:
+     - Click on "Writing Prompts" in the sidebar.
+     - Select your preferred genre or theme.
+     - Click "Generate Prompt" to receive creative writing ideas.
+
+3. **Export Your Work**: 
+   - For any generated content (books, outlines, character profiles), look for the "Export" button.
+   - Choose your preferred format (TXT, DOCX, or PDF) and save your work.
+
 
 ## Contributing
 
