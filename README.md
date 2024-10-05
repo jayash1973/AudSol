@@ -42,6 +42,11 @@ store your apikeys like this in the .env file
     XI_API_KEY = ""
     TOGETHER_API_KEY = ""
 ```
+
+**install requirements.txt**
+```
+    pip install -r requirements.txt
+```
 **run this command in the terminal**
 
 ``` streamlit run app.py ```
@@ -88,10 +93,8 @@ To get started with AUDSOL, follow these steps:
    - For any generated content (books, outlines, character profiles), look for the "Export" button.
    - Choose your preferred format (TXT, DOCX, or PDF) and save your work.
 
+## Contributors:
+Jayash Bhardwaj & Malaika Farooq
 
 ## Contributing
-
-
-
-
 AUDSOL - Empowering writers with AI. Create, publish, and profit!
