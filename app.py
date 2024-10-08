@@ -55,8 +55,8 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 
 # API Keys
-XI_API_KEY = os.environ.get('XI_API_KEY')
-TOGETHER_API_KEY = os.environ.get('TOGETHER_API_KEY')
+XI_API_KEY = "sk_44be09a8808c06fec48cc005a1f0443b1ef30711a06cb23c"
+TOGETHER_API_KEY = "291a366758796aaf86fe851b1b0ce2278ef75c750930e9f5d949e6b38bd208de"
 
 # Initialize clients
 elevenlabs_client = ElevenLabs(api_key=XI_API_KEY)
@@ -67,7 +67,7 @@ together_client = Together(api_key=TOGETHER_API_KEY)
 predefined_characters = {
     "Naruto Uzumaki": {
         "description": "Protagonist of the Naruto series. An optimistic and determined ninja with the goal of becoming Hokage.",
-        "voice_id": "ErXwobaYiN019PkySvjV",
+        "voice_id": " rKe56TKNeWFVS5tXg0nO",
         "image": "https://i.pinimg.com/originals/2e/f7/0d/2ef70d5217b530dfb766a45d9babbb5e.jpg"
         },
     "Sherlock Holmes": {
@@ -552,7 +552,29 @@ def main():
         st.write("""
         Explore our features using the sidebar menu and start transforming your writing career. With AUDSOL, you're not just writing—you're crafting your path to financial success in the world of self-publishing.
         """)
+    
+    elif choice == "Create Character":
+        st.header("Create a New Character")
+        col1, col2 = st.columns(2)
         
+        with col1:
+            new_name = st.text_input("Character Name")
+            new_description = st.text_area("Short Character Description (500 chars)", max_chars=500)
+            new_voice_file = st.file_uploader("Upload Voice Sample (MP3)", type=["mp3"])
+        
+        with col2:
+            new_detailed_description = st.text_area("Detailed Character Description")
+            new_image_file = st.file_uploader("Upload Character Image (Optional)", type=["jpg", "png"])
+        
+        if st.button("Create Character") and new_name and new_description and new_voice_file:
+            with st.spinner("Creating character..."):
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp_file:
+                    tmp_file.write(new_voice_file.getvalue())
+                    tmp_file_path = tmp_file.name
+                create_character(new_name, new_description, tmp_file_path, new_image_file)
+                os.unlink(tmp_file_path)
+                st.success(f"Character '{new_name}' created successfully!")
+    
     elif choice == "Chat with Characters":
         st.header("Chat with Characters")
     
@@ -805,11 +827,69 @@ def main():
             voice_option = st.radio("Voice Option:", ("Predefined", "Clone Your Voice"))
     
             if voice_option == "Predefined":
-                available_voices = elevenlabs_client.voices.get_all()
-                options = [voice[0] for voice in available_voices]
-                voice_id = st.selectbox("Select a voice",
-                                        options=options,
-                                        format_func=lambda x: next((voice[1] for voice in available_voices if voice[0] == x), x))
+                available_voices = [
+                    ("21m00Tcm4TlvDq8ikWAM", "Rachel"),
+                    ("2EiwWnXFnvU5JabPnv8n", "Domi"),
+                    ("AZnzlk1XvdvUeBnXmlld", "Bella"),
+                    ("EXAVITQu4vr4xnSDxMaL", "Antoni"),
+                    ("ErXwobaYiN019PkySvjV", "Elli"),
+                    ("MF3mGyEYCl7XYWbV9V6O", "Adam"),
+                    ("TxGEqnHWrfWFTfGW9XjX", "Sam"),
+                    ("VR6AewLTigWG4xSOukaG", "Josh"),
+                    ("pNInz6obpgDQGcFmaJgB", "Arnold"),
+                    ("yoZ06aMxZJJ28mfd3POQ", "Emma"),
+                    ("ZQe5CZNOzWyzPSCn5a3c", "Ava"),
+                    ("jBpfuIE2acCO8z3wKNLl", "Bella"),
+                    ("onwK4e9ZLuTAKqWW03F9", "Dorothy"),
+                    ("g5CIjZEefAph4nQFvHAz", "Josh"),
+                    ("wViXBPUzp2ZZixB1xQuM", "Arnold"),
+                    ("zrHiDhphv9ZnVXBqCLjz", "Charlotte"),
+                    ("t0jbNlBVZ17f02VDIeMI", "Matilda"),
+                    ("piTKgcLEGmPE4e6mEKli", "Matthew"),
+                    ("RErgWrLnpU47n1wBUr3G", "James"),
+                    ("N2lVS1w4EtoT3dr4eOWO", "Joseph"),
+                    ("ODq5zmih8GrVes37Dizd", "Jeremy"),
+                    ("SOYHLrjzK2X1ezoPC6cr", "Michael"),
+                    ("TX3LPaxmHKxFdv7VOQHJ", "Robert"),
+                    ("flq6f7yk4E4fJM5XTYNq", "Olivia"),
+                    ("z9fAnlkpzviPz146aGWa", "Sophia"),
+                    ("3KehXGbKd6Gu5T9fjnVK", "Ethan"),
+                    ("IKne3meq5aSn9XLyUdCD", "Charlie"),
+                    ("LcfcDJNUP1GQjkzn1xUU", "Amelia"),
+                    ("G4i3RVLNXz6PiE5QAgCu", "Lily"),
+                    ("XB0fDUnXU5powFXDhCwa", "Jackson"),
+                    ("xVe4PmtsSGVPkKo5V1gB", "Chloe"),
+                    ("YD5YTsM3TLX99VqWelFo", "Madison"),
+                    ("jsCqWAovK2LkecY7zXl4", "Ryan"),
+                    ("oWAxZDx7w5VEj9dCyTzz", "Luna"),
+                    ("1vXVqeHAitMxEfPe88RV", "Maverick"),
+                    ("2eGXxRfOxHPE1ZPCIzNv", "Zoe"),
+                    ("tL2Ybu6R2XEfqotJ1UWp", "Thomas"),
+                    ("XrExE9yKIg1WjnnlVkGX", "Scarlett"),
+                    ("Yko7PKHZNXotIFUBG7I9", "Daniel"),
+                    ("R2wc5f0yV8dVe4Y24eDC", "Hannah"),
+                    ("qNAGtHKepPLQO6GXVImS", "Liam"),
+                    ("h0ZXKKEOGPMlAb7yFQf0", "Isabella"),
+                    ("Jb5FM5xWS8mhCk0DHjmx", "Grace"),
+                    ("pOnD5fLH3IhEBY5YOHP4", "Noah"),
+                    ("r5U4RGJuA4kh2Umi8P3J", "Oliver"),
+                    ("x8GtTQIVJ5dxmYN4vffj", "Emily"),
+                    ("j9FdgHYQX3nG7qjc9VVG", "Sophie"),
+                    ("C8lN8YDucvTvl6yKiokH", "William"),
+                    ("JM6niiVGNJTotuzPD5kd", "Evelyn"),
+                    ("7JrRqOwEPGAznN7Uf8hU", "Benjamin")
+                ]
+                
+                selected_voice = st.selectbox(
+                    "Select a voice",
+                    options=available_voices,
+                    format_func=lambda x: f"{x[1]} (ID: {x[0]})"
+                )
+                
+                if selected_voice:
+                    voice_id, voice_name = selected_voice
+                    st.write(f"Selected Voice: {voice_name}")
+                    st.write(f"Voice ID: {voice_id}")
             else:
                 voice_sample = st.file_uploader("Upload your voice sample (MP3)", type=["mp3"])
                 if voice_sample:
