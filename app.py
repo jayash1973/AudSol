@@ -4,6 +4,7 @@ import json
 import os
 import pyaudio as pyaudio
 import base64
+from collections import defaultdict
 from io import BytesIO
 import speech_recognition as sr
 from elevenlabs import play, stream, save
@@ -34,7 +35,7 @@ import networkx as nx
 import speech_recognition as sr
 from streamlit_webrtc import webrtc_streamer, WebRtcMode, RTCConfiguration
 import matplotlib.pyplot as plt
-import plotly.graph_objs as go
+import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 nltk.download('punkt')
@@ -49,13 +50,13 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import math
 import wave
-
+import re
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 
 # API Keys
-XI_API_KEY = "sk_44be09a8808c06fec48cc005a1f0443b1ef30711a06cb23c"
+XI_API_KEY = "sk_6311dfd264e562763d5c2dd93acad19a020e91efdb281bfa"
 TOGETHER_API_KEY = "291a366758796aaf86fe851b1b0ce2278ef75c750930e9f5d949e6b38bd208de"
 
 # Initialize clients
@@ -67,7 +68,7 @@ together_client = Together(api_key=TOGETHER_API_KEY)
 predefined_characters = {
     "Naruto Uzumaki": {
         "description": "Protagonist of the Naruto series. An optimistic and determined ninja with the goal of becoming Hokage.",
-        "voice_id": " rKe56TKNeWFVS5tXg0nO",
+        "voice_id": "ErXwobaYiN019PkySvjV",
         "image": "https://i.pinimg.com/originals/2e/f7/0d/2ef70d5217b530dfb766a45d9babbb5e.jpg"
         },
     "Sherlock Holmes": {
@@ -306,37 +307,6 @@ def extract_text_from_file(file):
     
     return text
 
-# Character Arc Visualizer
-def character_arc_visualizer():
-    st.header("Character Arc Visualizer")
-    st.write("Visualize character development throughout your story.")
-
-    if 'character_arcs' not in st.session_state:
-        st.session_state.character_arcs = {}
-
-    # Input for character arc data
-    character_name = st.text_input("Enter character name")
-    arc_points = st.text_area("Enter arc points (format: Chapter,Development Level)")
-
-    if st.button("Add Character Arc"):
-        if character_name and arc_points:
-            arc_data = [tuple(point.split(',')) for point in arc_points.split('\n') if point.strip()]
-            st.session_state.character_arcs[character_name] = arc_data
-            st.success(f"Arc for {character_name} added successfully!")
-
-    # Visualize character arcs
-    if st.session_state.character_arcs:
-        st.subheader("Character Arcs")
-        fig = go.Figure()
-
-        for character, arc in st.session_state.character_arcs.items():
-            chapters, levels = zip(*arc)
-            fig.add_trace(go.Scatter(x=chapters, y=levels, mode='lines+markers', name=character))
-
-        fig.update_layout(title="Character Development Arcs",
-                          xaxis_title="Story Progression",
-                          yaxis_title="Character Development Level")
-        st.plotly_chart(fig)
 
 # World-Building Assistant
 def world_building_assistant():
@@ -508,7 +478,7 @@ def main():
     st.set_page_config(page_title="AUDSOL - AI Automation for Writers", page_icon="📚", layout="wide")
 
     menu = ["Home", "Create Character", "Chat with Characters", "Generate Book", "Convert to Audiobook", 
-            "Book Outline Generator", "Character Development Workshop", "Writing Prompts Generator", "Character Arc Visualizer", "World-Building Assistant", "Interactive Character Board"]
+            "Book Outline Generator", "Character Development Workshop", "Writing Prompts Generator", "World-Building Assistant", "Interactive Character Board"]
     choice = st.sidebar.selectbox("Menu", menu)
 
     if choice == "Home":
@@ -993,7 +963,7 @@ def main():
 
                         For each chapter, provide:
                         1. A compelling chapter title
-                        2. A detailed synopsis (200-300 words)
+                        2. A detailed synopsis (500-800 words)
                         3. Key plot points or events
                         4. Character development and interactions
                         5. Setting details and atmosphere
@@ -1040,7 +1010,7 @@ def main():
                             {"role": "system", "content": "You are a professional book outliner and developmental editor with extensive experience in creating detailed, chapter-by-chapter outlines for bestselling books across various genres."},
                             {"role": "user", "content": outline_prompt}
                         ],
-                        max_tokens=30000,  # Increased to maximum allowed
+                        max_tokens=15000,
                         temperature=0.7
                     )
 
@@ -1251,22 +1221,19 @@ def main():
                     "relationships": relationships,
                     "additional_info": additional_info,
                 }
-
+        
                 if new_image:
                     image = Image.open(new_image)
                     img_byte_arr = io.BytesIO()
                     image.save(img_byte_arr, format='PNG')
                     character_data["image"] = img_byte_arr.getvalue()
-
+        
                 st.session_state.character_board.append(character_data)
-
-                if new_stat and new_stat not in st.session_state.custom_stats:
-                    st.session_state.custom_stats.append(new_stat)
-
+        
                 st.success(f"Character '{new_name}' added successfully!")
             else:
                 st.warning("Please provide at least a name and description for the character.")
-
+        
         # Stat management
         with st.expander("Manage Stats"):
             st.subheader("Current Stats")
@@ -1276,7 +1243,7 @@ def main():
                 if col2.button("Remove", key=f"remove_{stat}"):
                     st.session_state.custom_stats.remove(stat)
                     st.experimental_rerun()
-
+        
             new_stat = st.text_input("Add New Stat")
             if st.button("Add Stat"):
                 if new_stat and new_stat not in st.session_state.custom_stats:
@@ -1311,9 +1278,6 @@ def main():
                         st.experimental_rerun()
         else:
             st.info("No characters added yet. Use the form above to add characters to the board.")
-
-    elif choice == "Character Arc Visualizer":
-        character_arc_visualizer()
 
     elif choice == "World-Building Assistant":
         world_building_assistant()
@@ -1351,9 +1315,6 @@ def main():
         if "story_branches" in st.session_state:
             if st.button("View Interactive Story"):
                 st.session_state.current_view = "interactive_story"
-        if "character_arcs" in st.session_state:
-            if st.button("View Character Arcs"):
-                st.session_state.current_view = "character_arcs"
         if "world_elements" in st.session_state:
             if st.button("View World-Building"):
                 st.session_state.current_view = "world_building"
@@ -1372,8 +1333,6 @@ def main():
         elif st.session_state.current_view == "writing_prompt":
             st.header("Writing Prompt")
             st.text_area("Prompt", st.session_state.writing_prompt, height=200)
-        elif st.session_state.current_view == "character_arcs":
-            character_arc_visualizer()
         elif st.session_state.current_view == "world_building":
             world_building_assistant()
 if __name__ == "__main__":
